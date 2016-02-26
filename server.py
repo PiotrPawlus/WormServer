@@ -18,9 +18,13 @@ print('Socked created and binding complete')
 s.listen(BACKLOG)
 print('Server listening')
 
-(conn, addr) = s.accept()
-print('Connected with ' + addr[0] + ':' + str(addr[1]))
-data = conn.recv(SIZE)
-conn.sendall(data)
-conn.close()
+while 1:
+    (conn, addr) = s.accept()
+    print('Connected with ' + addr[0] + ':' + str(addr[1]))
+
+    data = conn.recv(1024)
+    reply = 'OK...' + data
+    if data:
+        conn.send(reply)
+    conn.close()
 s.close()
