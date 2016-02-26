@@ -20,9 +20,10 @@ print('Server listening')
 
 while 1:
     (conn, addr) = s.accept()
-    print('Connected with ' + addr[0] + ':' + str(addr[1]))
+    # print('Connected with ' + addr[0] + ':' + str(addr[1]))
 
     data = conn.recv(1024)
+    print(data)
     reply = 'OK...' + data
     if data:
         conn.send(reply)
