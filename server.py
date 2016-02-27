@@ -31,7 +31,7 @@ def clientThread(conn):
                 _, uuid, x, y = data.split(':')
                 clients[uuid] = {"x": x, "y": y}
             if data:
-                conn.send("")
+                conn.send(data)
         conn.close()
     except Exception as e:
         print e.message
