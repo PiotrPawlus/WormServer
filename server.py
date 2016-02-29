@@ -21,15 +21,22 @@ s.listen(BACKLOG)
 print('Server listening')
 
 
-clients = {"other": {"x": 0, "y": 0}}
+clients = {}
 
 def clientThread(conn):
     try:
         while 1:
             data = conn.recv(SIZE)
+            my_uuid = ""
             if data.startswith("M"):
                 _, uuid, x, y = data.split(':')
+                my_uuid = uuid
                 clients[uuid] = {"x": x, "y": y}
+            if len(clients) == 2:
+                for key in clients:
+                    if key is not my_uuid:
+                        data = clients[key]
+            print(data)
             if data:
                 conn.send(data)
         conn.close()
