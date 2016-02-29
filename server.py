@@ -24,10 +24,11 @@ print('Server listening')
 clients = {}
 
 def clientThread(conn):
+    my_uuid = ""
     try:
         while 1:
             data = conn.recv(SIZE)
-            my_uuid = ""
+            client = {}
             if data.startswith("M"):
                 _, uuid, x, y = data.split(':')
                 my_uuid = uuid
@@ -35,11 +36,18 @@ def clientThread(conn):
             if len(clients) == 2:
                 for key in clients:
                     if key is not my_uuid:
-                        data = clients[key]
-            print(data)
+                        client = clients[key]
+                        data = ""
+                        for pos in client:
+                            data += "%s:%s:" % (pos, client[pos])
+                            # print("Pos %s: %s" % (pos, client[pos]))
+                        # print("Pos y: %s" % (client[y]))
+                        # print("Pos x: %s" % (client[x]))
+                        data = data[:-1]
             if data:
                 conn.send(data)
         conn.close()
+
     except Exception as e:
         print e.message
 
