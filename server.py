@@ -27,6 +27,7 @@ def clientThread(conn):
     my_uuid = ""
     try:
         while 1:
+            twoPlayerConnected = False
             data = conn.recv(SIZE)
             client = {}
             if data.startswith("M"):
@@ -34,6 +35,7 @@ def clientThread(conn):
                 my_uuid = uuid
                 clients[uuid] = {"x": x, "y": y}
             if len(clients) == 2:
+                twoPlayerConnected = True
                 for key in clients:
                     if key is not my_uuid:
                         client = clients[key]
@@ -44,8 +46,10 @@ def clientThread(conn):
                         # print("Pos y: %s" % (client[y]))
                         # print("Pos x: %s" % (client[x]))
                         data = data[:-1]
-            if data:
+            if data and twoPlayerConnected:
                 conn.send(data)
+            else:
+                conn.send("y:142.0:x:160.0")
         conn.close()
 
     except Exception as e:
