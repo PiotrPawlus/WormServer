@@ -31,25 +31,18 @@ def clientThread(conn):
             data = conn.recv(SIZE)
             client = {}
             if data.startswith("M"):
-                _, uuid, x, y = data.split(':')
+                _, uuid, x, y, r = data.split(':')
                 my_uuid = uuid
-                clients[uuid] = {"x": x, "y": y}
+                clients[uuid] = "x:%s:y:%s:r:%s" % (x,y,r)
             if len(clients) == 2:
                 twoPlayerConnected = True
                 for key in clients:
                     if key is not my_uuid:
-                        client = clients[key]
-                        data = ""
-                        for pos in client:
-                            data += "%s:%s:" % (pos, client[pos])
-                            # print("Pos %s: %s" % (pos, client[pos]))
-                        # print("Pos y: %s" % (client[y]))
-                        # print("Pos x: %s" % (client[x]))
-                        data = data[:-1]
+                        data = clients[key]
             if data and twoPlayerConnected:
                 conn.send(data)
             else:
-                conn.send("y:142.0:x:160.0")
+                conn.send("y:142.0:x:160.0:r:0.0")
         conn.close()
 
     except Exception as e:
