@@ -2,6 +2,7 @@ import sys
 import time
 import socket
 from thread import *
+import random
 
 
 HOST = ''
@@ -33,6 +34,7 @@ def clientThread(conn):
             _data = packet.split(':')
             kind = _data[0]
             uuid = _data[1]
+
             data = _data[2:-1]
             client_time = float(_data[-1])
             server_time = time.time()
@@ -64,6 +66,25 @@ def clientThread(conn):
                 pair_position = clients[pair]['position']
 
                 back = "M:%s:%f" % (":".join(pair_position), server_time)
+
+            if kind == "P":
+                #  data = \(playerX):\(playerY):\(playerRotation):\(pointX):\(pointY):\(pointCollected)
+                client = clients[uuid]
+                client_position = data[:-3] # playerX:playerY:playerRotation
+                point_position = data[3:4]
+                point_collected = data[-1]
+
+                if point_collected is 1:
+                    del point_position
+                    point_position.append(random.uniform(50.0, 850.0))
+                    point_position.append(random.uniform(50.0, 1550.0))
+
+                pair = client['pair']
+                pair_position = clients[pair]['position']
+
+                back = "M:%s:%s:%i:%f" % (":".join(pair_position), ":".join(point_position), point_collected ,server_time)
+                # P:playerX:playerY:platerRot:pointX:pointY:point_collected:timestamp
+
 
             if not back:
                 assert "bad packet"
