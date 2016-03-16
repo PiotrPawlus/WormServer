@@ -68,6 +68,8 @@ def clientThread(conn):
                 back = "M:%s:%f" % (":".join(pair_position), server_time)
 
             if kind == "P":
+                print("---------")
+                print("data: %s" % data)
                 client = clients[uuid]
                 client_position = data[:-3]
                 point_position = data[3:5]
@@ -75,8 +77,8 @@ def clientThread(conn):
 
                 if point_collected is "1":
                     point_position = []
-                    point_position.insert(0, random.uniform(0.0, 320.0))
-                    point_position.insert(1, random.uniform(0.0, 600.0))
+                    point_position.insert(0, random.uniform(0.0, data[6]))
+                    point_position.insert(1, random.uniform(0.0, data[7]))
 
                 pair = client['pair']
                 pair_position = clients[pair]['position']
