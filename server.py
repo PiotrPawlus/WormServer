@@ -70,19 +70,18 @@ def clientThread(conn):
             if kind == "P":
                 client = clients[uuid]
                 client_position = data[:-3]
-                point_position = data[3:4]
+                point_position = data[3:5]
                 point_collected = data[-1]
 
-                if point_collected is 1:
-                    del point_position
-                    point_position.append(random.uniform(0.0, 900.0))
-                    point_position.append(random.uniform(0.0, 1600.0))
+                if point_collected is "1":
+                    point_position = []
+                    point_position.insert(0, random.uniform(0.0, 320.0))
+                    point_position.insert(1, random.uniform(0.0, 600.0))
 
                 pair = client['pair']
                 pair_position = clients[pair]['position']
 
-                back = "P:%s:%s:%i:%f" % (":".join(pair_position), ":".join(point_position), point_collected ,server_time)
-                print("Otrzymano P")
+                back = "P:%s:%s:%s:%f" % (":".join(pair_position), ":".join(map(str, point_position)), point_collected ,server_time)
             if not back:
                 assert "bad packet"
 
