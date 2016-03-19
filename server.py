@@ -46,12 +46,14 @@ def clientThread(conn):
             if kind == "W":
                 others = [c for c in clients.keys() if c != uuid]
                 position = data
+                print("position: %s" % position)
                 if not others:
                     pair = None
                 else:
                     pair = others[0]
 
-                clients[uuid] = {"state": "W", "pair": pair, "position": position}
+                star = ['0.0', '0.0']
+                clients[uuid] = {"state": "W", "pair": pair, "position": position, "star": star}
 
                 back = "W:%d:%s:%f" % (
                     1 if pair else 0,
@@ -68,22 +70,25 @@ def clientThread(conn):
                 back = "M:%s:%f" % (":".join(pair_position), server_time)
 
             if kind == "P":
-                print("---------")
-                print("data: %s" % data)
                 client = clients[uuid]
-                client_position = data[:-3]
-                point_position = data[3:5]
-                point_collected = data[-1]
 
-                if point_collected is "1":
-                    point_position = []
-                    point_position.insert(0, random.uniform(0.0, data[6]))
-                    point_position.insert(1, random.uniform(0.0, data[7]))
+                client_x, client_y, client_rot, point_x, point_y, frame_width, frame_height = data
+
+                client['position'] = [client_x, client_y, client_rot]
+                client['star'] = [point_x, point_y]
 
                 pair = client['pair']
                 pair_position = clients[pair]['position']
+                pair_star = clients[pair]['star']
 
-                back = "P:%s:%s:%s:%f" % (":".join(pair_position), ":".join(map(str, point_position)), point_collected ,server_time)
+                print("------------------")
+                print("pair: %s" % pair)
+                print("pair_position: %s" % pair_position)
+                print("pair_star %s" % pair_star)
+                print("my_star %s" % client['star'])
+                print("------------------")
+
+                back = "P:%s:%s:%f" % (":".join(pair_position), ":".join(pair_star), server_time)
             if not back:
                 assert "bad packet"
 
