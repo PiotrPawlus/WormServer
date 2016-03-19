@@ -46,13 +46,12 @@ def clientThread(conn):
             if kind == "W":
                 others = [c for c in clients.keys() if c != uuid]
                 position = data
-                print("position: %s" % position)
                 if not others:
                     pair = None
                 else:
                     pair = others[0]
 
-                star = ['0.0', '0.0']
+                star = [0.0, 0.0]
                 clients[uuid] = {"state": "W", "pair": pair, "position": position, "star": star}
 
                 back = "W:%d:%s:%f" % (
@@ -71,24 +70,19 @@ def clientThread(conn):
 
             if kind == "P":
                 client = clients[uuid]
-
-                client_x, client_y, client_rot, point_x, point_y, frame_width, frame_height = data
+                client_x, client_y, client_rot, point_x, point_y, need_new_point, frame_width, frame_height = data
 
                 client['position'] = [client_x, client_y, client_rot]
-                client['star'] = [point_x, point_y]
-
                 pair = client['pair']
                 pair_position = clients[pair]['position']
-                pair_star = clients[pair]['star']
 
-                print("------------------")
-                print("pair: %s" % pair)
-                print("pair_position: %s" % pair_position)
-                print("pair_star %s" % pair_star)
-                print("my_star %s" % client['star'])
-                print("------------------")
+                if need_new_point:
+                    width = random.uniform(0.0, float(frame_width))
+                    height = random.uniform(0.0, float(frame_height))
+                    client['star'] = [width, height, '0']
+                    clients[pair]['star'] = [width, height, '0']
 
-                back = "P:%s:%s:%f" % (":".join(pair_position), ":".join(pair_star), server_time)
+                back = "P:%s:%s:%f" % (":".join(pair_position), ":".join(map(str, client['star'])), server_time)
             if not back:
                 assert "bad packet"
 
